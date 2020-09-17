@@ -1,0 +1,22 @@
+---
+title: "Assignment 5"
+author: "Anthony Criscione"
+date: "9/17/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(tidyverse)
+```
+
+
+## 1. 
+
+
+## 2. 
+
+
+## 3. 
