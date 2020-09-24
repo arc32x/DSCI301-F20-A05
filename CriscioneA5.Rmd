@@ -37,6 +37,8 @@ netflix <- read_csv(path,
 
 For reading the Netflix data, I changed `type` from character to factor since there are only 2 types, *Movie* and *TV Show*. I also changed the date variables (`date_added` and `release_year`) from character and double (respectively) to dates with the proper formatting. Finally, I changed `rating` from character to factor (since there are a relatively small number of pre-defined ratings), and `duration` from character to number to parse out the digits (movies have durations like "90 min" and shows have durations like "1 Season").
 
+<span style="color: green; font-size: 14pt">*Comments:*  Oh the differences in the recording of duration are going to make life more complicated. But that's how things go. </span>
+
 
 ## 2. EDA: Duration
 ```{r}
@@ -50,6 +52,10 @@ netflix %>%
 
 This analysis shows distribution of durations of movies. Since this data set contains both movies and TV shows, the TV shows had to be filtered out (their durations are measured in seasons instead of minutes and cannot be converted). Overall, the movie durations follow a fairly normal distribution, with movies around 100 minutes being the most common. Notably, there appear to be more short movies (duration < 50 minutes) than there are long movies (duration > 160 minutes).
 
+<span style="color: green; font-size: 14pt">It's wild to me that there are so many short movies.  I'm wondering what's actually in those very short ones--I noticed 11 with durations less than 20 minutes. (But I didn't notice anything obviously weird in those results.)</span> 
+
+<span style="color: green; font-size: 14pt">I'm now wondering whether there's also anything interesting in the durations for the series, although apparently they're going to be all counts.</span> 
+
 
 ## 3. Covariation: Type by Country
 ```{r}
@@ -61,6 +67,20 @@ netflix %>%
        x = "Type", y = "Count")
 ```
 
+<span style="color: green; font-size: 14pt">Ah, good--I see you found `grepl`.  :)  (And `grepl` is a *great* way to locate substrings in a column in R.)</span> 
+
 For covariation, I decided to explore different content types available by country (to simplify, I went with US vs. Non-US content). Overall, there is more content outside of the US than there is inside the US, but considering this is comparing many countries to one, the US certainly has a *lot* of content on its own. Looking at the differences between the two, the US has almost as many movies as the rest of the world (within roughly 300 movies), but only half as many TV shows as the rest of the world. Notice that the rest of the world has a show-to-movie ratio of about 1:2, while the US is roughly 1:3. The US seems to value movies more than TV shows compared to the rest of the world.
 
 For data cleaning, I needed to separate content by whether or not it was available in the US. Since some content is available in multiple countries (i.e. `country = "China, Canada, United States"`), I couldn't use `filter(country == "United States")`, and therefore had to use `grepl()` to find the substring "United States" (`grepl` is a grep function, which uses regular expressions). I'm not sure if there is a more R-typical way of finding substrings, but this worked nicely. I used `mutate` to create an additional column for this grouping so the key in the plot would show `US_Content` instead of `grepl("United States", country)`.
+
+<span style="color: green; font-size: 14pt">You made me wonder a bit, so I generated a table of the top countries:</span> 
+
+```{r}
+netflix %>%
+  count(country, type) %>%
+  filter(n > 50) %>%
+  arrange(desc(n))
+```
+<span style="color: green; font-size: 14pt">A fair number of NAs here pulling out a top spot, but it's interesting that we seem to have identified the major countries represented on Netflix--and there's a lot of them. I know India has a huge movie industry, so I'm not surprised they are the runner-up on movies.</span> 
+
+<span style="color: green; font-size: 14pt">I'm personally interested that South Korean TV shows are in the number 9 place; I did notice a lot of South Korean TV on Netflix in the last few years.  (But I wasn't sure if that was just because I was watching it.)</span> 
